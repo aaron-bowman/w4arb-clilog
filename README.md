@@ -8,5 +8,6 @@ Command line tool for logging. I made this for SST to start with, just for mysel
 
 ## Useage
 1. Run the script, with the text file you want to write to as an argument. Example: `./clilog.sh /home/abowman/20240405_SST.txt`
-3. Log your contacts
-4. Copy the text in the text file into Fast Log Entry to complete the log
+2. Log your contacts.
+3. To switch between Run & S&P, just CTRL+C to quit and rerun it. Each log entry is appended to the text file so it'll just pick up where you left off. Told you it's simple.
+4. Copy the text in the text file into Fast Log Entry to complete the log.
