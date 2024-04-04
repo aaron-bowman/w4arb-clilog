@@ -1,13 +1,22 @@
 # w4arb-clilog
-Command line tool for logging. I made this for SST to start with, just for myself. It's not fancy, just a simple shell script for easy modification and portability. It spits out text for Fast Log Entry to generate ADIF files. This is just so I can have one terminal up during a contest and log all my contacts without any distraction. Feel free to copy and edit as desired.
+Command line ham radio logging for contests. Initially, I'm using this for SST and CWT mini contests. I'll add features, fields, etc. as needed for different contests.
+This is a very simple tool with one purpose; zero-distraction logging while contesting unassisted. Feel free to copy, use, modify, etc. at will.
 
 ## Features:
-- Search and Pounce: Asks for Frequency every QSO
-- Run: Only asks for Frequency once
-- Call Lookup: When you enter a call, it performs a lookup in HamDB and prints the results in JSON. It's readable enough for me.
+- Performs Callsign Lookups While Logging (HamDB, some DX may not be found)
+- Stores Log in Fast Log Entry (FLE) Format for Easy Reading/Modification
+- Export to ADIF File
+
+### Key Functions:
+0) Initiate Log: Sets the fields for My Call, My Grid, and initial Band and Mode (can be changed later)
+1) Contest - Run: Logs QSOs while "running" on a frequency. Sets frequency once at the beginning of the run.
+2) Contest - Search & Pounce: Logs QSOs while "S&P"ing. Sets frequency for every QSO.
+3) View Log: Shows a readable output of contacts in the log file.
+4) Export ADIF: Uses FLEcli to export an ADIF file of all contacts in the log file.
+5) Change Band/Mode: Changes band and mode for subsequent QSOs
 
 ## Useage
-1. Run the script, with the text file you want to write to as an argument. Example: `./clilog.sh /home/abowman/20240405_SST.txt`
-2. Log your contacts.
-3. To switch between Run & S&P, just CTRL+C to quit and rerun it. Each log entry is appended to the text file so it'll just pick up where you left off. Told you it's simple.
-4. Copy the text in the text file into Fast Log Entry to complete the log.
+1. Copy this repo to a Linux machine (or probably Mac, but haven't tested that)
+2. Run the script with the text file you want to write to as an argument. Example: `./clilog.sh YYYYMMDD_SST.txt`
+3. Operate distraction-free and log your contacts
+4. Export to ADIF and upload wherever you need to!
