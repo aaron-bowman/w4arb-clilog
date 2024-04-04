@@ -23,7 +23,7 @@ menu() {
   echo "3) View Log"
   echo "4) Export ADIF File"
   echo "5) Change Band/Mode"
-  echo "6) Exit"
+  echo "9) Exit"
   echo "---------------"
   echo ""
   read -p "Selection: " method
