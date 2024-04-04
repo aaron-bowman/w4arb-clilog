@@ -134,7 +134,7 @@ elif [ $method = "0" ]; then
   echo "mygrid $my_grid"   >> $log_file
   echo "operator $my_call" >> $log_file
 
-  if ! [ $my_pota = "" ]; then
+  if [[ -n "$my_pota" ]]; then
     echo "mypota $my_pota"   >> $log_file
   fi
 
