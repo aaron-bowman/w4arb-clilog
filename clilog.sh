@@ -23,10 +23,8 @@ menu() {
   echo "3) View Log"
   echo "4) Export ADIF File"
   echo "5) Change Band/Mode"
-  echo "6) POTA - Activation"
   echo "9) Exit"
   echo "---------------"
-  echo ""
   read -p "Selection: " method
 }
 
@@ -135,7 +133,11 @@ elif [ $method = "0" ]; then
   echo "mycall $my_call"   >> $log_file
   echo "mygrid $my_grid"   >> $log_file
   echo "operator $my_call" >> $log_file
-  echo "mypota $my_pota"   >> $log_file
+
+  if ! [ $my_pota = "" ]; then
+    echo "mypota $my_pota"   >> $log_file
+  fi
+
   echo ""                  >> $log_file
   echo "# Log"             >> $log_file
   echo "date $date"        >> $log_file
