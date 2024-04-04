@@ -18,11 +18,12 @@ menu() {
   echo "----- MENU -----"
   echo "Choose an Option"
   echo "0) Initiate Log"
-  echo "1) Contest - Run"
-  echo "2) Contest - Search & Pounce"
+  echo "1) Run"
+  echo "2) Search & Pounce"
   echo "3) View Log"
   echo "4) Export ADIF File"
   echo "5) Change Band/Mode"
+  echo "6) POTA - Activation"
   echo "9) Exit"
   echo "---------------"
   echo ""
@@ -125,6 +126,7 @@ elif [ $method = "0" ]; then
   echo "----- Initiating Log -----"
   read -p "My Call: " my_call
   read -p "My Grid: " my_grid
+  read -p "My POTA (blank for none): " my_pota
   read -p "Mode: " mode
   read -p "Band (Format: 20M): " band
   date=$(date -u +'%Y-%m-%d')
@@ -133,6 +135,7 @@ elif [ $method = "0" ]; then
   echo "mycall $my_call"   >> $log_file
   echo "mygrid $my_grid"   >> $log_file
   echo "operator $my_call" >> $log_file
+  echo "mypota $my_pota"   >> $log_file
   echo ""                  >> $log_file
   echo "# Log"             >> $log_file
   echo "date $date"        >> $log_file
