@@ -10,6 +10,10 @@ continue="N"
 
 ## Functions
 menu() {
+  if ! [ -f $log_file ]; then
+   echo "NOTICE: Log File Not Yet Initiated!"
+  fi
+
   echo ""
   echo "----- MENU -----"
   echo "Choose an Option"
@@ -17,14 +21,18 @@ menu() {
   echo "1) Contest - Run"
   echo "2) Contest - Search & Pounce"
   echo "3) View Log"
+  echo "4) Export ADIF File"
+  echo "5) Change Band/Mode"
+  echo "6) Exit"
   echo "---------------"
   echo ""
   read -p "Selection: " method
 }
 
 lookup_call(){
-  echo "Enter 'EXIT' to Return to Main Menu"
-
+  echo "For Main Menu, Enter EXIT"
+  echo ""
+  
   read -p "Call: " call
 
   if [ ${call^^} = "EXIT" ]; then
@@ -36,17 +44,13 @@ lookup_call(){
   fi
 }
 
-
 ## Begin Script
-clear
 menu
 
 if [ $method = "1" ]; then
 
   if ! [ -f $log_file ]; then
-    echo ""
-    echo "ERROR - Log Not Initiated..."
-    menu
+    exec bash "$0" $log_file
   fi
 
   clear
@@ -76,9 +80,7 @@ if [ $method = "1" ]; then
 elif [ $method = "2" ]; then
 
   if ! [ -f $log_file ]; then
-    echo ""
-    echo "ERROR - Log Not Initiated..."
-    menu
+    exec bash "$0" $log_file
   fi
 
   clear
@@ -108,15 +110,15 @@ elif [ $method = "2" ]; then
 elif [ $method = "3" ]; then
   clear
   echo "----- Log Entries -----"
-  cat $log_file
-  menu
+  ./FLEcli load $log_file
+  exec bash "$0" $log_file
 
 elif [ $method = "0" ]; then
 
   if [ -f $log_file ]; then
     echo ""
     echo "ERROR - Log Already Initiated..."
-    menu
+    exec bash "$0" $log_file
   fi
 
   clear
@@ -124,7 +126,9 @@ elif [ $method = "0" ]; then
   read -p "My Call: " my_call
   read -p "My Grid: " my_grid
   read -p "Mode: " mode
+  read -p "Band (Format: 20M): " band
   date=$(date -u +'%Y-%m-%d')
+
   echo "# Header"          >> $log_file
   echo "mycall $my_call"   >> $log_file
   echo "mygrid $my_grid"   >> $log_file
@@ -132,12 +136,30 @@ elif [ $method = "0" ]; then
   echo ""                  >> $log_file
   echo "# Log"             >> $log_file
   echo "date $date"        >> $log_file
-  echo "$mode"             >> $log_file
-  echo "Log Initiated:"
-  cat $log_file
+  echo "$band $mode"       >> $log_file
 
-  menu  
+  exec bash "$0" $log_file
+
+elif [ $method = "4" ]; then
+  ./FLEcli adif -i --overwrite $log_file $log_file".adi" 
+
+  echo "File exported: $log_file'.adi' - Exiting..."
+  exit 0
+
+elif [ $method = "5" ]; then
+  echo "----- Change Band/Mode -----"
+  read -p "Band (Format: 20M): " band
+  read -p "Mode: " mode
+  echo ""            >> $log_file
+  echo "$band $mode" >> $log_file
+  exec bash "$0" $log_file
+
+elif [ $method = "9" ]; then
+  echo "Exiting..."
+  exit 0
+
 else
-  echo "Try Again..."
-  menu
+  clear
+  echo "Invalid Selection..."
+  exec bash "$0" $log_file
 fi
