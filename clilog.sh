@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ $# -eq 0 ]; then
-  echo "Provide Log File Path as Arugment. Example: /home/abowman/logs/20240403.txt"
+  echo "Provide Log File Path as Arugment. Example: 20240403.txt"
   exit 1
 fi
 
