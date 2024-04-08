@@ -24,6 +24,7 @@ menu() {
   echo "4) Change Band/Mode"
   echo "5) Export ADIF File"
   echo "6) Upload ADIF to QRZ"
+  echo "7) General Logging"
   echo "9) Exit"
   echo "---------------"
   read -p "Selection: " method
@@ -47,8 +48,8 @@ lookup_call(){
 ## Begin Script
 menu
 
+# Run
 if [ $method = "1" ]; then
-
   if ! [ -f $log_file ]; then
     exec bash "$0" $log_file
   fi
@@ -77,8 +78,8 @@ if [ $method = "1" ]; then
     echo "QSO Logged: $frequency $time $call @$name <$name $state $identifier>"
   done
 
+# Search & Pounce
 elif [ $method = "2" ]; then
-
   if ! [ -f $log_file ]; then
     exec bash "$0" $log_file
   fi
@@ -107,14 +108,51 @@ elif [ $method = "2" ]; then
     echo "QSO Logged: $frequency $time $call @$name <$name $state $identifier>"
   done
 
+# General Logging
+elif [ $method = "7" ]; then
+  if ! [ -f $log_file ]; then
+    exec bash "$0" $log_file
+  fi
+
+  clear
+  echo "----- General Logging -----"
+
+  while true; do
+    echo ""
+    echo "-- QSO --"
+
+    continue="N"
+
+    while ! [ ${continue^^} = "Y" ]; do
+      lookup_call
+    done
+
+    if [ -z $frequency ]; then
+      read -p "Frequency (MHz): " frequency
+    else
+      echo "Current Frequency: $frequency"
+      read -p "Overwrite? (Y/N): " ow_freq
+      if [ ${ow_freq^^} = "Y" ]; then
+        read -p "Frequency (MHz): " frequency
+      fi
+    fi
+
+    read -p "UTC Time (HHMM): " time
+    read -p "Comments: " comments
+
+    echo "$frequency $time $call <$comments>" >> $log_file
+    echo "QSO Logged: $frequency $time $call <$comments>"
+  done
+
+# View Log
 elif [ $method = "3" ]; then
   clear
   echo "----- Log Entries -----"
   ./FLEcli load $log_file
   exec bash "$0" $log_file
 
+# Initiate Log File
 elif [ $method = "0" ]; then
-
   if [ -f $log_file ]; then
     echo ""
     echo "ERROR - Log Already Initiated..."
@@ -146,12 +184,13 @@ elif [ $method = "0" ]; then
 
   exec bash "$0" $log_file
 
+# Export ADIF
 elif [ $method = "5" ]; then
   ./FLEcli adif -i --overwrite $log_file $log_file".adi" 
-
   echo "File exported: $log_file'.adi'"
   exec bash "$0" $log_file
 
+# Change Band/Mode
 elif [ $method = "4" ]; then
   echo "----- Change Band/Mode -----"
   read -p "Band (Format: 20M): " band
@@ -160,6 +199,7 @@ elif [ $method = "4" ]; then
   echo "$band $mode" >> $log_file
   exec bash "$0" $log_file
 
+# Upload to QRZ
 elif [ $method = "6" ]; then
   echo ""
   echo "----- Upload to QRZ -----"
@@ -182,10 +222,12 @@ elif [ $method = "6" ]; then
 
   exec bash "$0" $log_file
 
+# Exit
 elif [ $method = "9" ]; then
   echo "Exiting..."
   exit 0
 
+# Invalid
 else
   clear
   echo "Invalid Selection..."
