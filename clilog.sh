@@ -24,7 +24,7 @@ menu() {
   echo "4) Change Band/Mode"
   echo "5) Export ADIF File"
   echo "6) Upload ADIF to QRZ"
-  echo "7) General Logging"
+  echo "7) General Log Entry"
   echo "9) Exit"
   echo "---------------"
   read -p "Selection: " method
@@ -32,8 +32,6 @@ menu() {
 
 lookup_call(){
   echo "For Main Menu, Enter EXIT"
-  echo ""
-  
   read -p "Call: " call
 
   if [ ${call^^} = "EXIT" ]; then
