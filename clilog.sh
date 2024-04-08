@@ -21,8 +21,9 @@ menu() {
   echo "1) Run"
   echo "2) Search & Pounce"
   echo "3) View Log"
-  echo "4) Export ADIF File"
-  echo "5) Change Band/Mode"
+  echo "4) Change Band/Mode"
+  echo "5) Export ADIF File"
+  echo "6) Upload ADIF to QRZ"
   echo "9) Exit"
   echo "---------------"
   read -p "Selection: " method
@@ -145,18 +146,40 @@ elif [ $method = "0" ]; then
 
   exec bash "$0" $log_file
 
-elif [ $method = "4" ]; then
+elif [ $method = "5" ]; then
   ./FLEcli adif -i --overwrite $log_file $log_file".adi" 
 
-  echo "File exported: $log_file'.adi' - Exiting..."
-  exit 0
+  echo "File exported: $log_file'.adi'"
+  exec bash "$0" $log_file
 
-elif [ $method = "5" ]; then
+elif [ $method = "4" ]; then
   echo "----- Change Band/Mode -----"
   read -p "Band (Format: 20M): " band
   read -p "Mode: " mode
   echo ""            >> $log_file
   echo "$band $mode" >> $log_file
+  exec bash "$0" $log_file
+
+elif [ $method = "6" ]; then
+  echo ""
+  echo "----- Upload to QRZ -----"
+
+  if ! [ -f $log_file".adi" ]; then
+    echo "Log Must be Exported to ADIF First"
+    exec bash "$0" $log_file
+  fi
+
+  if ! [ -f tmp/qrz.key ]; then
+    echo "tmp/qrz.key File Missing"
+    exec bash "$0" $log_file
+  fi
+
+  qrz_key=`cat tmp/qrz.key`
+  cat $log_file".adi" | grep 'STATION_CALLSIGN' | while read line; do qso=`echo $line | sed 's/ /%20/g'` && curl -d "KEY=$qrz_key&ACTION=INSERT&ADIF=$qso" -X POST https://logbook.qrz.com/api; done
+
+  echo ""
+  echo "QRZ Upload Process Complete, Review Results Above"
+
   exec bash "$0" $log_file
 
 elif [ $method = "9" ]; then
