@@ -66,14 +66,12 @@ if [ $method = "1" ]; then
       lookup_call
     done
 
-    read -p "Name: " name
-    read -p "State: " state
-    read -p "Identifier: " identifier
+    read -p "Comments: " comments
 
     time=$(date -u '+%H%M')
 
-    echo "$frequency $time $call <$name $state $identifier>" >> $log_file
-    echo "QSO Logged: $frequency $time $call @$name <$name $state $identifier>"
+    echo "$frequency $time $call <$comments>" >> $log_file
+    echo "QSO Logged: $frequency $time $call <$comments>"
   done
 
 # Search & Pounce
@@ -96,14 +94,12 @@ elif [ $method = "2" ]; then
     done
 
     read -p "Frequency (MHz): " frequency
-    read -p "Name: " name
-    read -p "State: " state
-    read -p "Identifier: " identifier
+    read -p "Comments: " comments
 
     time=$(date -u '+%H%M')
 
-    echo "$frequency $time $call <$name $state $identifier>" >> $log_file
-    echo "QSO Logged: $frequency $time $call @$name <$name $state $identifier>"
+    echo "$frequency $time $call <$comments>" >> $log_file
+    echo "QSO Logged: $frequency $time $call <$comments>"
   done
 
 # General Logging
