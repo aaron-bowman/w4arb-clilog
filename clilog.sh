@@ -10,8 +10,12 @@ continue="N"
 
 ## Functions
 menu() {
+  echo ""
+  echo "----- CLI Log by W4ARB -----"
   if ! [ -f $log_file ]; then
-   echo "NOTICE: Log File Not Yet Initiated!"
+    echo "NOTICE: Log File Not Yet Initiated!"
+  else
+    echo "Current Log File: " $log_file
   fi
 
   echo ""
@@ -24,22 +28,25 @@ menu() {
   echo "4) Change Band/Mode"
   echo "5) Export ADIF File"
   echo "6) Upload ADIF to QRZ"
-  echo "7) General Log Entry"
-  echo "9) Exit"
+  echo "EXIT) Exit"
   echo "---------------"
   read -p "Selection: " method
+
+  if [ ${method^^} = "EXIT" ]; then
+    echo "Exiting..."
+    exit 0
+  fi
 }
 
 lookup_call(){
-  echo "For Main Menu, Enter EXIT"
+  echo "Enter EXIT to Cancel Entry"
   read -p "Call: " call
 
   if [ ${call^^} = "EXIT" ]; then
     exec bash "$0" $log_file
   else
-    curl -sL https://api.hamdb.org/$call/json/clilog
+    curl -sL https://api.hamdb.org/$call/json/clilog | jq '["Call:", "First Name:", "Last Name:", "City:", "State:", "Country:"], [.hamdb.callsign.call, .hamdb.callsign.fname, .hamdb.callsign.name, .hamdb.callsign.addr2, .hamdb.callsign.state, .hamdb.callsign.country] | @csv' | sed 's/\\//g' | sed 's/"//g' | column -t -s, -o"    "
     echo ""
-    read -p "Continue? (Y or N) " continue
   fi
 }
 
@@ -52,7 +59,7 @@ if [ $method = "1" ]; then
     exec bash "$0" $log_file
   fi
 
-  clear
+  echo ""
   echo "----- RUN -----"
   read -p "Frequency (MHz): " frequency
 
@@ -60,18 +67,17 @@ if [ $method = "1" ]; then
     echo ""
     echo "-- QSO --"
 
-    continue="N"
-
-    while ! [ ${continue^^} = "Y" ]; do
-      lookup_call
-    done
+    lookup_call
 
     read -p "Comments: " comments
+    if [ ${comments^^} = "EXIT" ]; then
+      continue
+    fi
 
     time=$(date -u '+%H%M')
 
     echo "$frequency $time $call <$comments>" >> $log_file
-    echo "QSO Logged: $frequency $time $call <$comments>"
+    ./FLEcli load $log_file
   done
 
 # Search & Pounce
@@ -80,67 +86,34 @@ elif [ $method = "2" ]; then
     exec bash "$0" $log_file
   fi
 
-  clear
+  echo ""
   echo "----- Search & Pounce -----"
 
   while true; do
     echo ""
     echo "-- QSO --"
 
-    continue="N"
-
-    while ! [ ${continue^^} = "Y" ]; do
-      lookup_call
-    done
+    lookup_call
 
     read -p "Frequency (MHz): " frequency
+    if [ ${frequency^^} = "EXIT" ]; then
+      continue
+    fi
+
     read -p "Comments: " comments
+    if [ ${comments^^} = "EXIT" ]; then
+      continue
+    fi
 
     time=$(date -u '+%H%M')
 
     echo "$frequency $time $call <$comments>" >> $log_file
-    echo "QSO Logged: $frequency $time $call <$comments>"
-  done
-
-# General Logging
-elif [ $method = "7" ]; then
-  if ! [ -f $log_file ]; then
-    exec bash "$0" $log_file
-  fi
-
-  clear
-  echo "----- General Logging -----"
-
-  while true; do
-    echo ""
-    echo "-- QSO --"
-
-    continue="N"
-
-    while ! [ ${continue^^} = "Y" ]; do
-      lookup_call
-    done
-
-    if [ -z $frequency ]; then
-      read -p "Frequency (MHz): " frequency
-    else
-      echo "Current Frequency: $frequency"
-      read -p "Overwrite? (Y/N): " ow_freq
-      if [ ${ow_freq^^} = "Y" ]; then
-        read -p "Frequency (MHz): " frequency
-      fi
-    fi
-
-    read -p "UTC Time (HHMM): " time
-    read -p "Comments: " comments
-
-    echo "$frequency $time $call <$comments>" >> $log_file
-    echo "QSO Logged: $frequency $time $call <$comments>"
+    ./FLEcli load $log_file
   done
 
 # View Log
 elif [ $method = "3" ]; then
-  clear
+  echo ""
   echo "----- Log Entries -----"
   ./FLEcli load $log_file
   exec bash "$0" $log_file
@@ -153,7 +126,7 @@ elif [ $method = "0" ]; then
     exec bash "$0" $log_file
   fi
 
-  clear
+  echo ""
   echo "----- Initiating Log -----"
   read -p "My Call: " my_call
   read -p "My Grid: " my_grid
@@ -186,6 +159,7 @@ elif [ $method = "5" ]; then
 
 # Change Band/Mode
 elif [ $method = "4" ]; then
+  echo ""
   echo "----- Change Band/Mode -----"
   read -p "Band (Format: 20M): " band
   read -p "Mode: " mode
@@ -209,21 +183,15 @@ elif [ $method = "6" ]; then
   fi
 
   qrz_key=`cat tmp/qrz.key`
-  cat $log_file".adi" | grep 'STATION_CALLSIGN' | while read line; do qso=`echo $line | sed 's/ /%20/g'` && curl -d "KEY=$qrz_key&ACTION=INSERT&ADIF=$qso" -X POST https://logbook.qrz.com/api; done
+  cat $log_file".adi" | grep 'STATION_CALLSIGN' | while read line; do qso=`echo $line | sed 's/ /%20/g'` && curl -d "KEY=$qrz_key&ACTION=INSERT&ADIF=$qso" -X POST https://logbook.qrz.com/api && echo ""; done
 
   echo ""
   echo "QRZ Upload Process Complete, Review Results Above"
 
   exec bash "$0" $log_file
 
-# Exit
-elif [ $method = "9" ]; then
-  echo "Exiting..."
-  exit 0
-
 # Invalid
 else
-  clear
   echo "Invalid Selection..."
   exec bash "$0" $log_file
 fi
