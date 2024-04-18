@@ -1,5 +1,6 @@
 # w4arb-clilog
-Command line based logging that looks up call signs while logging, and writes Fast Log Entry (FLE) log text files. This is not a fancy logging app, it's just a way for me to log in the FLE format and perform call lookups at the same time without window switching. It's intended for distraction-free logging. Additionally, once the ADIF is exported it can be uploaded to QRZ if a ./tmp/qrz.key file is in place with your QRZ logbook API key.
+Command line based logging that looks up call signs while logging, and writes Fast Log Entry (FLE) log text files. This is not a fancy logging app, it's just intended for me to log in the FLE format and perform call lookups at the same time without window switching while contesting or other activities like SST and CWT. It's intended for distraction-free logging. 
+Additionally, once the ADIF is exported it can be uploaded to QRZ if a ./tmp/qrz.key file is in place with your QRZ logbook API key.
 
 ## Features:
 - Performs Callsign Lookups While Logging (HamDB, some DX may not be found)
