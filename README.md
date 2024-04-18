@@ -1,11 +1,11 @@
 # w4arb-clilog
-Command line ham radio logging for contests and such. Initially, I'm using this for SST and CWT mini contests. I'll add features, fields, etc. as needed for different contests.It also works for realtime logging POTA activations under "run". 
-This is a very simple tool with one purpose; zero-distraction logging while operating unassisted. Feel free to copy, use, modify, etc. at will.
+Command line based logging that looks up call signs while logging, and writes Fast Log Entry (FLE) log text files. This is not a fancy logging app, it's just a way for me to log in the FLE format and perform call lookups at the same time without window switching. It's intended for distraction-free logging. Additionally, once the ADIF is exported it can be uploaded to QRZ if a ./tmp/qrz.key file is in place with your QRZ logbook API key.
 
 ## Features:
 - Performs Callsign Lookups While Logging (HamDB, some DX may not be found)
 - Stores Log in Fast Log Entry (FLE) Format for Easy Reading/Modification
 - Export to ADIF File
+- Upload to QRZ Directly via API
 
 ### Key Functions:
 0) Initiate Log: Sets the fields for My Call, My Grid, and initial Band and Mode (can be changed later)
