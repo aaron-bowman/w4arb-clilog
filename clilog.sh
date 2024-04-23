@@ -45,7 +45,8 @@ lookup_call(){
   if [ ${call^^} = "EXIT" ]; then
     exec bash "$0" $log_file
   else
-    curl -sL https://api.hamdb.org/$call/json/clilog | jq '["Call:", "First Name:", "Last Name:", "City:", "State:", "Country:"], [.hamdb.callsign.call, .hamdb.callsign.fname, .hamdb.callsign.name, .hamdb.callsign.addr2, .hamdb.callsign.state, .hamdb.callsign.country] | @csv' | sed 's/\\//g' | sed 's/"//g' | column -t -s, -o"    "
+    echo ""
+    curl -sL https://api.hamdb.org/$call/json/clilog | jq '["Call:", "First Name:", "Last Name:", "City:", "State:", "Country:"], [.hamdb.callsign.call, .hamdb.callsign.fname, .hamdb.callsign.name, .hamdb.callsign.addr2, .hamdb.callsign.state, .hamdb.callsign.country] | @csv' | sed 's/\\//g' | sed 's/"//g' | column -t -s, -o'    '
     echo ""
   fi
 }
@@ -70,7 +71,7 @@ if [ $method = "1" ]; then
     lookup_call
 
     read -p "Comments: " comments
-    if [ ${comments^^} = "EXIT" ]; then
+    if [ "$comments" = "EXIT" ]; then
       continue
     fi
 
@@ -95,13 +96,13 @@ elif [ $method = "2" ]; then
 
     lookup_call
 
-    read -p "Frequency (MHz): " frequency
-    if [ ${frequency^^} = "EXIT" ]; then
+    read -p "Comments: " comments
+    if [ "$comments" = "EXIT" ]; then
       continue
     fi
 
-    read -p "Comments: " comments
-    if [ ${comments^^} = "EXIT" ]; then
+    read -p "Frequency (MHz): " frequency
+    if [ $frequency = "EXIT" ]; then
       continue
     fi
 
